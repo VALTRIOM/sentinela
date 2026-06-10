@@ -1,11 +1,12 @@
 /** @odoo-module **/
 
-import { loadBundle } from "@web/core/assets";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { formatFloat, formatMonetary } from "@web/views/fields/formatters";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
+import { Chart, registerables } from "chart.js";
+Chart.register(...registerables);
 
 import { Component, onWillStart, onWillUnmount, useEffect, useRef, useState, xml } from "@odoo/owl";
 
@@ -321,7 +322,6 @@ export class SentinellaDashboard extends Component {
         });
 
         onWillStart(async () => {
-            await loadBundle("web.chartjs_lib");
             await this.loadData();
         });
 
@@ -518,7 +518,7 @@ export class SentinellaDashboard extends Component {
         const labels = history.map(function(h) { return h.date; });
         const data = history.map(function(h) { return h.z; });
 
-        this.chartInstances.altman = new window.Chart(el, {
+        this.chartInstances.altman = new Chart(el, {
             type: "line",
             data: {
                 labels: labels,
@@ -572,7 +572,7 @@ export class SentinellaDashboard extends Component {
             return l.account.length > 20 ? l.account.substring(0, 20) + "..." : l.account;
         });
 
-        this.chartInstances.bar = new window.Chart(el, {
+        this.chartInstances.bar = new Chart(el, {
             type: "bar",
             data: {
                 labels: lineLabels,
@@ -615,7 +615,7 @@ export class SentinellaDashboard extends Component {
         const costs = this.state.data && this.state.data.costs;
         if (!el || !costs || !costs.pie_labels || !costs.pie_labels.length) return;
 
-        this.chartInstances.pie = new window.Chart(el, {
+        this.chartInstances.pie = new Chart(el, {
             type: "pie",
             data: {
                 labels: costs.pie_labels,
