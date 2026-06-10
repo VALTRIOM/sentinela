@@ -1,12 +1,11 @@
 /** @odoo-module **/
 
+import { loadBundle } from "@web/core/assets";
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { formatFloat, formatMonetary } from "@web/views/fields/formatters";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
-import { Chart, registerables } from "chart.js";
-Chart.register(...registerables);
 
 import { Component, onWillStart, onWillUnmount, useEffect, useRef, useState, xml } from "@odoo/owl";
 
@@ -322,6 +321,7 @@ export class SentinellaDashboard extends Component {
         });
 
         onWillStart(async () => {
+            try { await loadBundle("web.chartjs_lib"); } catch (e) {}
             await this.loadData();
         });
 
@@ -513,7 +513,8 @@ export class SentinellaDashboard extends Component {
 
     _renderAltmanChart() {
         const el = this.altmanChartRef.el;
-        if (!el || !this.state.data || !this.state.data.altman_history || !this.state.data.altman_history.length) return;
+        const Chart = window.Chart;
+        if (!Chart || !el || !this.state.data || !this.state.data.altman_history || !this.state.data.altman_history.length) return;
         const history = this.state.data.altman_history;
         const labels = history.map(function(h) { return h.date; });
         const data = history.map(function(h) { return h.z; });
@@ -563,7 +564,8 @@ export class SentinellaDashboard extends Component {
 
     _renderBarChart() {
         const el = this.barChartRef.el;
-        if (!el || !this.state.data || !this.state.data.costs) return;
+        const Chart = window.Chart;
+        if (!Chart || !el || !this.state.data || !this.state.data.costs) return;
         const lines = this.state.data.costs.lines || [];
         const slice = lines.slice(0, 8);
         const currentData = slice.map(function(l) { return l.current; });
@@ -612,8 +614,9 @@ export class SentinellaDashboard extends Component {
 
     _renderPieChart() {
         const el = this.pieChartRef.el;
+        const Chart = window.Chart;
         const costs = this.state.data && this.state.data.costs;
-        if (!el || !costs || !costs.pie_labels || !costs.pie_labels.length) return;
+        if (!Chart || !el || !costs || !costs.pie_labels || !costs.pie_labels.length) return;
 
         this.chartInstances.pie = new Chart(el, {
             type: "pie",
