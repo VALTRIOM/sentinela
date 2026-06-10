@@ -26,7 +26,6 @@
         "web.assets_backend": [
             "vtm_sentinella_core/static/src/js/sentinella_dashboard.js",
             "vtm_sentinella_core/static/src/scss/sentinella_dashboard.scss",
-            "vtm_sentinella_core/static/src/xml/sentinella_dashboard.xml",
         ],
     },
 }
