@@ -26,7 +26,7 @@
             </div>
             <div class="o_sentinella__hero-actions">
                 <!-- Selector de empresa si hay múltiples -->
-                <t t-if="state.data and state.data.companies and state.data.companies.length > 1">
+                <t t-if="state.data &amp;&amp; state.data.companies &amp;&amp; state.data.companies.length > 1">
                     <select class="form-select form-select-sm" style="min-width:160px;"
                             t-on-change="(e) => this.changeCompany(e.target.value)">
                         <option value="">Todas las empresas</option>
@@ -41,7 +41,7 @@
                     <i class="fa fa-refresh"/> Actualizar
                 </button>
                 <button class="sl-btn sl-btn-primary" t-on-click="computeNow"
-                        t-att-disabled="state.computing or state.loading">
+                        t-att-disabled="state.computing || state.loading">
                     <i class="fa fa-bolt"/>
                     <t t-if="state.computing">Calculando…</t>
                     <t t-else="">Calcular Ahora</t>
@@ -62,7 +62,7 @@
             <button t-attf-class="tab-btn {{ state.activeTab === 'recommendations' ? 'active' : '' }}"
                     t-on-click="() => this.setTab('recommendations')">
                 📋 Recomendaciones
-                <t t-if="state.data and state.data.recommendations and state.data.recommendations.length">
+                <t t-if="state.data &amp;&amp; state.data.recommendations &amp;&amp; state.data.recommendations.length">
                     <span class="badge bg-danger ms-1" t-esc="state.data.recommendations.length"/>
                 </t>
             </button>
@@ -85,10 +85,10 @@
         <!-- ═══════════════════════════════════════════════════════════════════
              TAB 1: SEMÁFORO FINANCIERO
         ════════════════════════════════════════════════════════════════════ -->
-        <t t-if="!state.loading and state.activeTab === 'kpis'">
+        <t t-if="!state.loading &amp;&amp; state.activeTab === 'kpis'">
 
             <!-- KPI Cards -->
-            <div class="o_sentinella__kpi-grid" t-if="state.data and state.data.kpis">
+            <div class="o_sentinella__kpi-grid" t-if="state.data &amp;&amp; state.data.kpis">
                 <t t-foreach="state.data.kpis" t-as="kpi" t-key="kpi.key">
                     <div t-attf-class="o_sentinella__kpi-card {{ stateClass(kpi.state) }}">
                         <div class="kpi-label" t-esc="kpi.label"/>
@@ -135,8 +135,8 @@
         <!-- ═══════════════════════════════════════════════════════════════════
              TAB 2: ANÁLISIS DE COSTOS
         ════════════════════════════════════════════════════════════════════ -->
-        <t t-if="!state.loading and state.activeTab === 'costs'">
-            <t t-if="state.data and state.data.costs and state.data.costs.period_label">
+        <t t-if="!state.loading &amp;&amp; state.activeTab === 'costs'">
+            <t t-if="state.data &amp;&amp; state.data.costs &amp;&amp; state.data.costs.period_label">
 
                 <!-- Métricas resumen -->
                 <div class="o_sentinella__cost-metrics">
@@ -246,8 +246,8 @@
         <!-- ═══════════════════════════════════════════════════════════════════
              TAB 3: RECOMENDACIONES
         ════════════════════════════════════════════════════════════════════ -->
-        <t t-if="!state.loading and state.activeTab === 'recommendations'">
-            <t t-if="state.data and state.data.recommendations and state.data.recommendations.length">
+        <t t-if="!state.loading &amp;&amp; state.activeTab === 'recommendations'">
+            <t t-if="state.data &amp;&amp; state.data.recommendations &amp;&amp; state.data.recommendations.length">
                 <div class="o_sentinella__rec-grid">
                     <t t-foreach="state.data.recommendations" t-as="rec" t-key="rec.id">
                         <div class="o_sentinella__rec-card">
