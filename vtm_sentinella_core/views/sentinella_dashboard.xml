@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_sentinella_dashboard" model="ir.actions.client">
+            <field name="name">Sentinella</field>
+            <field name="tag">vtm_sentinella_core.dashboard</field>
+            <field name="path">sentinella</field>
+        </record>
+    </data>
+</odoo>

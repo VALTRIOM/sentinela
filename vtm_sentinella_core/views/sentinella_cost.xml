@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sentinella_cost_list" model="ir.ui.view">
+            <field name="name">sentinella.cost.list</field>
+            <field name="model">sentinella.cost</field>
+            <field name="arch" type="xml">
+                <tree string="Análisis de Costos" default_order="date_from desc" decoration-danger="cost_state=='rojo'" decoration-warning="cost_state=='amarillo'">
+                    <field name="period_label" string="Período"/>
+                    <field name="company_id" optional="show"/>
+                    <field name="total_revenue" string="Ventas"/>
+                    <field name="total_opex" string="OPEX"/>
+                    <field name="opex_revenue_pct" string="OPEX %"/>
+                    <field name="gross_margin_pct" string="Mg. Bruto %"/>
+                    <field name="cost_state" widget="badge" decoration-success="cost_state=='verde'" decoration-warning="cost_state=='amarillo'" decoration-danger="cost_state=='rojo'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_sentinella_cost_form" model="ir.ui.view">
+            <field name="name">sentinella.cost.form</field>
+            <field name="model">sentinella.cost</field>
+            <field name="arch" type="xml">
+                <form string="Análisis de Costos">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="period_label"/> — <field name="company_id"/></h1>
+                        </div>
+                        <group col="4">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="total_revenue"/>
+                            <field name="total_expense"/>
+                            <field name="gross_margin_pct"/>
+                            <field name="ebitda_pct"/>
+                            <field name="opex_revenue_pct"/>
+                            <field name="financial_revenue_pct"/>
+                            <field name="revenue_change_pct" string="Var% Ventas"/>
+                            <field name="opex_change_pct" string="Var% OPEX"/>
+                            <field name="cost_state" widget="badge"/>
+                        </group>
+                        <field name="line_ids">
+                            <tree decoration-warning="alert_state=='anomalia'" decoration-danger="alert_state=='exceso'">
+                                <field name="account_name"/>
+                                <field name="account_type_cat" widget="badge"/>
+                                <field name="amount_current"/>
+                                <field name="amount_prev"/>
+                                <field name="change_pct"/>
+                                <field name="pct_of_revenue"/>
+                                <field name="alert_state" widget="badge"/>
+                            </tree>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sentinella_cost_list" model="ir.actions.act_window">
+            <field name="name">Análisis de Costos</field>
+            <field name="res_model">sentinella.cost</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

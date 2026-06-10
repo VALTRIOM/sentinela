@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<t t-name="vtm_sentinella_core.Dashboard">
+    <div class="o_sentinella">
+
+        <!-- Hero ──────────────────────────────────────────────────────────── -->
+        <div class="o_sentinella__hero">
+            <div class="o_sentinella__hero-left">
+                <div class="eyebrow">INTELIGENCIA EMPRESARIAL</div>
+                <h1>Sentinella</h1>
+                <div class="meta" t-if="state.data">
+                    <span>
+                        <t t-if="state.data.meta.company_name">
+                            <b t-esc="state.data.meta.company_name"/>
+                        </t>
+                    </span>
+                    <span t-if="state.data.meta.date">
+                        Actualizado: <t t-esc="state.data.meta.date"/>
+                    </span>
+                    <span t-if="state.data.overall_state"
+                          t-attf-class="state-badge {{ stateClass(state.data.overall_state) }}">
+                        <t t-esc="stateLabel(state.data.overall_state)"/>
+                    </span>
+                </div>
+            </div>
+            <div class="o_sentinella__hero-actions">
+                <!-- Selector de empresa si hay múltiples -->
+                <t t-if="state.data and state.data.companies and state.data.companies.length > 1">
+                    <select class="form-select form-select-sm" style="min-width:160px;"
+                            t-on-change="(e) => this.changeCompany(e.target.value)">
+                        <option value="">Todas las empresas</option>
+                        <t t-foreach="state.data.companies" t-as="co" t-key="co.id">
+                            <option t-att-value="co.id" t-esc="co.name"
+                                    t-att-selected="state.selectedCompanyId === co.id"/>
+                        </t>
+                    </select>
+                </t>
+                <button class="sl-btn sl-btn-outline" t-on-click="loadData"
+                        t-att-disabled="state.loading">
+                    <i class="fa fa-refresh"/> Actualizar
+                </button>
+                <button class="sl-btn sl-btn-primary" t-on-click="computeNow"
+                        t-att-disabled="state.computing or state.loading">
+                    <i class="fa fa-bolt"/>
+                    <t t-if="state.computing">Calculando…</t>
+                    <t t-else="">Calcular Ahora</t>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs ──────────────────────────────────────────────────────────── -->
+        <div class="o_sentinella__tabs">
+            <button t-attf-class="tab-btn {{ state.activeTab === 'kpis' ? 'active' : '' }}"
+                    t-on-click="() => this.setTab('kpis')">
+                📊 Semáforo Financiero
+            </button>
+            <button t-attf-class="tab-btn {{ state.activeTab === 'costs' ? 'active' : '' }}"
+                    t-on-click="() => this.setTab('costs')">
+                💰 Análisis de Costos
+            </button>
+            <button t-attf-class="tab-btn {{ state.activeTab === 'recommendations' ? 'active' : '' }}"
+                    t-on-click="() => this.setTab('recommendations')">
+                📋 Recomendaciones
+                <t t-if="state.data and state.data.recommendations and state.data.recommendations.length">
+                    <span class="badge bg-danger ms-1" t-esc="state.data.recommendations.length"/>
+                </t>
+            </button>
+        </div>
+
+        <!-- Loading skeleton ──────────────────────────────────────────────── -->
+        <t t-if="state.loading">
+            <div class="o_sentinella__skeleton">
+                <t t-foreach="[1,2,3,4,5]" t-as="i" t-key="i">
+                    <div class="skel-card"/>
+                </t>
+            </div>
+            <div class="o_sentinella__skeleton">
+                <t t-foreach="[1,2]" t-as="i" t-key="i">
+                    <div class="skel-card" style="height:220px; grid-column: span 2"/>
+                </t>
+            </div>
+        </t>
+
+        <!-- ═══════════════════════════════════════════════════════════════════
+             TAB 1: SEMÁFORO FINANCIERO
+        ════════════════════════════════════════════════════════════════════ -->
+        <t t-if="!state.loading and state.activeTab === 'kpis'">
+
+            <!-- KPI Cards -->
+            <div class="o_sentinella__kpi-grid" t-if="state.data and state.data.kpis">
+                <t t-foreach="state.data.kpis" t-as="kpi" t-key="kpi.key">
+                    <div t-attf-class="o_sentinella__kpi-card {{ stateClass(kpi.state) }}">
+                        <div class="kpi-label" t-esc="kpi.label"/>
+                        <div class="kpi-value" t-esc="kpiDisplay(kpi)"/>
+                        <div class="kpi-state" t-esc="stateLabel(kpi.state)"/>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Altman Z' trend + panel info -->
+            <div class="o_sentinella__charts">
+                <div class="o_sentinella__panel">
+                    <div class="panel-title">Tendencia Altman Z'</div>
+                    <div class="panel-sub">Evolución del score de riesgo financiero. Zona gris: 1.23–2.9 · Distress: &lt;1.23</div>
+                    <div class="o_sentinella__chart-container">
+                        <canvas t-ref="altmanChart"/>
+                    </div>
+                </div>
+                <div class="o_sentinella__panel" t-if="state.data">
+                    <div class="panel-title">Resumen Actual</div>
+                    <div class="panel-sub">Balances al <t t-esc="state.data.meta.date"/></div>
+                    <table style="width:100%;font-size:13px;border-collapse:collapse;">
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:6px 0;color:#5b6874;">Caja efectiva</td>
+                            <td style="padding:6px 0;text-align:right;font-weight:700;"
+                                t-esc="state.data.kpis ? formatMoney(state.data.kpis.find(k=>k.key==='cash')?.value || 0) : '—'"/>
+                        </tr>
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:6px 0;color:#5b6874;">Cuentas por Cobrar</td>
+                            <td style="padding:6px 0;text-align:right;font-weight:700;"
+                                t-esc="state.data.kpis ? formatMoney(state.data.kpis.find(k=>k.key==='ar')?.value || 0) : '—'"/>
+                        </tr>
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:6px 0;color:#5b6874;">Ventas LTM</td>
+                            <td style="padding:6px 0;text-align:right;font-weight:700;"
+                                t-esc="state.data.kpis ? formatMoney(state.data.kpis.find(k=>k.key==='revenue')?.value || 0) : '—'"/>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </t>
+
+        <!-- ═══════════════════════════════════════════════════════════════════
+             TAB 2: ANÁLISIS DE COSTOS
+        ════════════════════════════════════════════════════════════════════ -->
+        <t t-if="!state.loading and state.activeTab === 'costs'">
+            <t t-if="state.data and state.data.costs and state.data.costs.period_label">
+
+                <!-- Métricas resumen -->
+                <div class="o_sentinella__cost-metrics">
+                    <div class="o_sentinella__cost-metric">
+                        <div class="cm-label">Ventas</div>
+                        <div class="cm-value" t-esc="formatMoney(state.data.costs.total_revenue)"/>
+                        <div t-attf-class="cm-change {{ state.data.costs.revenue_change_pct >= 0 ? 'down' : 'up' }}">
+                            <t t-if="state.data.costs.revenue_change_pct >= 0">▲</t>
+                            <t t-else="">▼</t>
+                            <t t-esc="formatNum(Math.abs(state.data.costs.revenue_change_pct), 1)"/>%
+                        </div>
+                    </div>
+                    <div class="o_sentinella__cost-metric">
+                        <div class="cm-label">Margen Bruto</div>
+                        <div class="cm-value" t-esc="formatNum(state.data.costs.gross_margin_pct, 1) + '%'"/>
+                    </div>
+                    <div class="o_sentinella__cost-metric">
+                        <div class="cm-label">EBITDA %</div>
+                        <div class="cm-value" t-esc="formatNum(state.data.costs.ebitda_pct, 1) + '%'"/>
+                    </div>
+                    <div class="o_sentinella__cost-metric">
+                        <div class="cm-label">OPEX / Ventas</div>
+                        <div class="cm-value" t-esc="formatNum(state.data.costs.opex_pct, 1) + '%'"/>
+                        <div t-attf-class="cm-change {{ state.data.costs.opex_change_pct > 0 ? 'up' : 'down' }}">
+                            <t t-if="state.data.costs.opex_change_pct > 0">▲</t>
+                            <t t-else="">▼</t>
+                            <t t-esc="formatNum(Math.abs(state.data.costs.opex_change_pct), 1)"/>% vs ant.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="o_sentinella__charts">
+                    <div class="o_sentinella__panel">
+                        <div class="panel-title">Top Gastos — Actual vs Anterior</div>
+                        <div class="panel-sub">Período: <t t-esc="state.data.costs.period_label"/></div>
+                        <div class="o_sentinella__chart-container">
+                            <canvas t-ref="barChart"/>
+                        </div>
+                    </div>
+                    <div class="o_sentinella__panel">
+                        <div class="panel-title">Distribución de Gastos</div>
+                        <div class="panel-sub">Por cuenta — período actual</div>
+                        <div class="o_sentinella__chart-container">
+                            <canvas t-ref="pieChart"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla detalle -->
+                <div class="o_sentinella__panel">
+                    <div class="panel-title">Detalle por Cuenta</div>
+                    <div class="panel-sub">Anomalías: crecimiento >20% vs período anterior</div>
+                    <table class="o_sentinella__cost-table">
+                        <thead>
+                            <tr>
+                                <th>Cuenta</th>
+                                <th>Tipo</th>
+                                <th style="text-align:right">Actual</th>
+                                <th style="text-align:right">Anterior</th>
+                                <th style="text-align:right">Var%</th>
+                                <th style="text-align:right">% Ventas</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.data.costs.lines" t-as="line" t-key="line_index">
+                                <tr t-attf-class="{{ line.state !== 'normal' ? 'is-' + line.state : '' }}">
+                                    <td t-esc="line.account"/>
+                                    <td>
+                                        <span t-attf-class="badge-cat {{ line.category }}"
+                                              t-esc="line.category.toUpperCase()"/>
+                                    </td>
+                                    <td style="text-align:right;font-weight:600;"
+                                        t-esc="formatMoney(line.current)"/>
+                                    <td style="text-align:right;color:#5b6874;"
+                                        t-esc="formatMoney(line.prev)"/>
+                                    <td style="text-align:right;">
+                                        <span t-attf-class="{{ line.change_pct > 0 ? 'change-positive' : 'change-negative' }}">
+                                            <t t-if="line.change_pct > 0">+</t>
+                                            <t t-esc="formatNum(line.change_pct, 1)"/>%
+                                        </span>
+                                    </td>
+                                    <td style="text-align:right;" t-esc="formatNum(line.pct_revenue, 1) + '%'"/>
+                                    <td>
+                                        <t t-if="line.state === 'anomalia'">⚠️ Anomalía</t>
+                                        <t t-elif="line.state === 'exceso'">🔴 Exceso</t>
+                                        <t t-else="">✅</t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+            </t>
+            <t t-else="">
+                <div class="o_sentinella__panel" style="text-align:center;padding:48px;">
+                    <p style="color:#5b6874;font-size:16px;">No hay análisis de costos disponible aún.</p>
+                    <button class="sl-btn sl-btn-primary" t-on-click="computeNow">
+                        <i class="fa fa-bolt"/> Calcular Ahora
+                    </button>
+                </div>
+            </t>
+        </t>
+
+        <!-- ═══════════════════════════════════════════════════════════════════
+             TAB 3: RECOMENDACIONES
+        ════════════════════════════════════════════════════════════════════ -->
+        <t t-if="!state.loading and state.activeTab === 'recommendations'">
+            <t t-if="state.data and state.data.recommendations and state.data.recommendations.length">
+                <div class="o_sentinella__rec-grid">
+                    <t t-foreach="state.data.recommendations" t-as="rec" t-key="rec.id">
+                        <div class="o_sentinella__rec-card">
+                            <div class="rec-header">
+                                <div class="rec-icon-title">
+                                    <span class="rec-icon" t-esc="rec.icon"/>
+                                    <span class="rec-title" t-esc="rec.title"/>
+                                </div>
+                                <span t-attf-class="rec-priority p{{ rec.priority }}">
+                                    <t t-if="rec.priority === '1'">Alta</t>
+                                    <t t-elif="rec.priority === '2'">Media</t>
+                                    <t t-else="">Baja</t>
+                                </span>
+                            </div>
+                            <div class="rec-body">
+                                <span t-esc="rec.category_label" style="font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;"/>
+                            </div>
+                            <div class="rec-footer">
+                                <span class="rec-impact" t-if="rec.impact > 0">
+                                    Impacto: <t t-esc="formatMoney(rec.impact)"/>
+                                </span>
+                                <span t-else=""/>
+                                <div class="rec-actions">
+                                    <t t-if="rec.state === 'abierta'">
+                                        <button class="sl-btn sl-btn-outline sl-btn-sm"
+                                                t-on-click="() => this.updateRecommendation(rec.id, 'en_proceso')">
+                                            En proceso
+                                        </button>
+                                        <button class="sl-btn sl-btn-outline sl-btn-sm"
+                                                t-on-click="() => this.updateRecommendation(rec.id, 'cerrada')">
+                                            Cerrar
+                                        </button>
+                                    </t>
+                                    <t t-elif="rec.state === 'en_proceso'">
+                                        <button class="sl-btn sl-btn-primary sl-btn-sm"
+                                                t-on-click="() => this.updateRecommendation(rec.id, 'cerrada')">
+                                            ✓ Completar
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="o_sentinella__panel" style="text-align:center;padding:48px;">
+                    <p style="font-size:32px;">✅</p>
+                    <p style="color:#5b6874;font-size:16px;">No hay recomendaciones activas.</p>
+                </div>
+            </t>
+        </t>
+
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" rx="36" fill="#176B87"/>
+  <text x="100" y="130" font-size="100" text-anchor="middle" fill="white">🛡️</text>
+  <text x="100" y="175" font-size="22" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="sans-serif" font-weight="bold" letter-spacing="2">SENTINELLA</text>
+</svg>

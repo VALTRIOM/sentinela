@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Los umbrales se crean automáticamente on-demand via get_for_company()
+         con los defaults definidos en sentinella.config. Este archivo
+         registra la acción del dashboard OWL. -->
+</odoo>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sentinella_snapshot_list" model="ir.ui.view">
+            <field name="name">sentinella.snapshot.list</field>
+            <field name="model">sentinella.snapshot</field>
+            <field name="arch" type="xml">
+                <tree string="Snapshots KPI" default_order="date desc" decoration-danger="overall_state=='rojo'" decoration-warning="overall_state=='amarillo'">
+                    <field name="date"/>
+                    <field name="company_id" optional="show"/>
+                    <field name="overall_state" widget="badge" decoration-success="overall_state=='verde'" decoration-warning="overall_state=='amarillo'" decoration-danger="overall_state=='rojo'"/>
+                    <field name="dias_caja" string="Días Caja"/>
+                    <field name="quick_ratio" string="Q.Ratio"/>
+                    <field name="ccc" string="CCC"/>
+                    <field name="altman_z" string="Z'"/>
+                    <field name="alert_count" string="Alertas"/>
+                    <button name="action_view_alerts" type="object" string="Ver alertas" icon="fa-bell"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_sentinella_snapshot_form" model="ir.ui.view">
+            <field name="name">sentinella.snapshot.form</field>
+            <field name="model">sentinella.snapshot</field>
+            <field name="arch" type="xml">
+                <form string="Snapshot Financiero">
+                    <header>
+                        <field name="overall_state" widget="statusbar" statusbar_visible="verde,amarillo,rojo"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1><field name="company_id"/> — <field name="date"/></h1>
+                        </div>
+                        <notebook>
+                            <page string="Liquidez">
+                                <group col="4">
+                                    <field name="cash"/>
+                                    <field name="ar_balance"/>
+                                    <field name="current_assets"/>
+                                    <field name="current_liab"/>
+                                    <field name="dias_caja"/>
+                                    <field name="dias_caja_state" widget="badge"/>
+                                    <field name="quick_ratio"/>
+                                    <field name="quick_ratio_state" widget="badge"/>
+                                    <field name="current_ratio"/>
+                                    <field name="current_ratio_state" widget="badge"/>
+                                </group>
+                            </page>
+                            <page string="Eficiencia">
+                                <group col="4">
+                                    <field name="dso"/>
+                                    <field name="dso_state" widget="badge"/>
+                                    <field name="dpo"/>
+                                    <field name="dio"/>
+                                    <field name="ccc"/>
+                                    <field name="ccc_state" widget="badge"/>
+                                </group>
+                            </page>
+                            <page string="Solvencia">
+                                <group col="4">
+                                    <field name="net_debt"/>
+                                    <field name="ebitda_ltm"/>
+                                    <field name="debt_ebitda"/>
+                                    <field name="debt_ebitda_state" widget="badge"/>
+                                    <field name="ebit_ltm"/>
+                                    <field name="financial_exp"/>
+                                    <field name="interest_coverage"/>
+                                    <field name="interest_coverage_state" widget="badge"/>
+                                    <field name="altman_z"/>
+                                    <field name="altman_z_state" widget="badge"/>
+                                </group>
+                            </page>
+                            <page string="Alertas">
+                                <field name="alert_ids">
+                                    <tree>
+                                        <field name="kpi_label"/>
+                                        <field name="kpi_value"/>
+                                        <field name="threshold"/>
+                                        <field name="state" widget="badge" decoration-warning="state=='amarillo'" decoration-danger="state=='rojo'"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sentinella_snapshot_list" model="ir.actions.act_window">
+            <field name="name">Historial KPIs</field>
+            <field name="res_model">sentinella.snapshot</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{"search_default_group_by_company": 0}</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menú principal (ícono en el home de Odoo) -->
+        <menuitem
+            id="menu_sentinella_root"
+            name="Sentinella"
+            sequence="90"
+            groups="vtm_sentinella_core.group_sentinella_user"
+            web_icon="vtm_sentinella_core,static/description/icon.png"
+        />
+
+        <!-- Dashboard OWL -->
+        <menuitem
+            id="menu_sentinella_dashboard"
+            name="Dashboard"
+            parent="menu_sentinella_root"
+            action="action_sentinella_dashboard"
+            sequence="1"
+            groups="vtm_sentinella_core.group_sentinella_user"
+        />
+
+        <!-- Snapshots KPI -->
+        <menuitem
+            id="menu_sentinella_snapshots"
+            name="Historial KPIs"
+            parent="menu_sentinella_root"
+            action="action_sentinella_snapshot_list"
+            sequence="10"
+            groups="vtm_sentinella_core.group_sentinella_user"
+        />
+
+        <!-- Alertas -->
+        <menuitem
+            id="menu_sentinella_alerts"
+            name="Alertas"
+            parent="menu_sentinella_root"
+            action="action_sentinella_alert_list"
+            sequence="20"
+            groups="vtm_sentinella_core.group_sentinella_user"
+        />
+
+        <!-- Análisis de Costos -->
+        <menuitem
+            id="menu_sentinella_costs"
+            name="Análisis de Costos"
+            parent="menu_sentinella_root"
+            action="action_sentinella_cost_list"
+            sequence="30"
+            groups="vtm_sentinella_core.group_sentinella_user"
+        />
+
+        <!-- Recomendaciones -->
+        <menuitem
+            id="menu_sentinella_recommendations"
+            name="Recomendaciones"
+            parent="menu_sentinella_root"
+            action="action_sentinella_recommendation_list"
+            sequence="40"
+            groups="vtm_sentinella_core.group_sentinella_user"
+        />
+
+        <!-- Configuración -->
+        <menuitem
+            id="menu_sentinella_config"
+            name="Configuración"
+            parent="menu_sentinella_root"
+            action="action_sentinella_config"
+            sequence="100"
+            groups="vtm_sentinella_core.group_sentinella_manager"
+        />
+    </data>
+</odoo>

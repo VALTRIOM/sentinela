@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_sentinella_recommendation_list" model="ir.actions.act_window">
+            <field name="name">Recomendaciones</field>
+            <field name="res_model">sentinella.recommendation</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[("state", "in", ["abierta", "en_proceso"])]</field>
+            <field name="context">{"search_default_group_by_category": 0}</field>
+        </record>
+
+        <record id="view_sentinella_recommendation_list" model="ir.ui.view">
+            <field name="name">sentinella.recommendation.list</field>
+            <field name="model">sentinella.recommendation</field>
+            <field name="arch" type="xml">
+                <tree string="Recomendaciones" default_order="priority asc, date desc" decoration-danger="priority=='1'" decoration-warning="priority=='2'">
+                    <field name="date"/>
+                    <field name="company_id" optional="show"/>
+                    <field name="priority" widget="priority"/>
+                    <field name="category"/>
+                    <field name="title"/>
+                    <field name="impact" optional="show"/>
+                    <field name="state" widget="badge" decoration-info="state=='abierta'" decoration-warning="state=='en_proceso'" decoration-success="state=='cerrada'"/>
+                    <field name="responsible_id" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_sentinella_recommendation_form" model="ir.ui.view">
+            <field name="name">sentinella.recommendation.form</field>
+            <field name="model">sentinella.recommendation</field>
+            <field name="arch" type="xml">
+                <form string="Recomendación">
+                    <header>
+                        <button name="%(action_sentinella_recommendation_list)d" type="action" string="Abrir" class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'cerrada')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="abierta,en_proceso,cerrada"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="title"/>
+                                <field name="category"/>
+                                <field name="priority" widget="priority"/>
+                                <field name="responsible_id"/>
+                            </group>
+                            <group>
+                                <field name="company_id"/>
+                                <field name="date"/>
+                                <field name="impact"/>
+                            </group>
+                        </group>
+                        <field name="body" widget="html"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

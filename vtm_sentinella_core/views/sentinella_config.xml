@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sentinella_config_form" model="ir.ui.view">
+            <field name="name">sentinella.config.form</field>
+            <field name="model">sentinella.config</field>
+            <field name="arch" type="xml">
+                <form string="Configuración Sentinella">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>Configuración — <field name="company_id"/></h1>
+                        </div>
+                        <notebook>
+                            <page string="Liquidez">
+                                <group string="Días de Caja" col="2">
+                                    <field name="dias_caja_warning"/>
+                                    <field name="dias_caja_critical"/>
+                                </group>
+                                <group string="Quick Ratio" col="2">
+                                    <field name="quick_ratio_warning"/>
+                                    <field name="quick_ratio_critical"/>
+                                </group>
+                                <group string="Current Ratio" col="2">
+                                    <field name="current_ratio_warning"/>
+                                    <field name="current_ratio_critical"/>
+                                </group>
+                            </page>
+                            <page string="Eficiencia">
+                                <group string="DSO" col="2">
+                                    <field name="dso_warning"/>
+                                    <field name="dso_critical"/>
+                                </group>
+                                <group string="CCC" col="2">
+                                    <field name="ccc_warning"/>
+                                    <field name="ccc_critical"/>
+                                </group>
+                            </page>
+                            <page string="Solvencia">
+                                <group string="Deuda/EBITDA" col="2">
+                                    <field name="debt_ebitda_warning"/>
+                                    <field name="debt_ebitda_critical"/>
+                                </group>
+                                <group string="Cobertura de Intereses" col="2">
+                                    <field name="interest_coverage_warning"/>
+                                    <field name="interest_coverage_critical"/>
+                                </group>
+                                <group string="Altman Z'" col="2">
+                                    <field name="altman_z_warning"/>
+                                    <field name="altman_z_critical"/>
+                                </group>
+                            </page>
+                            <page string="Costos">
+                                <group string="OPEX/Ventas %" col="2">
+                                    <field name="opex_revenue_warning"/>
+                                    <field name="opex_revenue_critical"/>
+                                </group>
+                                <group string="Gasto Financiero/Ventas %" col="2">
+                                    <field name="financial_revenue_warning"/>
+                                    <field name="financial_revenue_critical"/>
+                                </group>
+                                <group string="Anomalías de Costo">
+                                    <field name="cost_anomaly_pct"/>
+                                </group>
+                            </page>
+                            <page string="Notificaciones">
+                                <group>
+                                    <field name="notify_managers"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_sentinella_config_list" model="ir.ui.view">
+            <field name="name">sentinella.config.list</field>
+            <field name="model">sentinella.config</field>
+            <field name="arch" type="xml">
+                <tree string="Configuración Sentinella">
+                    <field name="company_id"/>
+                    <field name="quick_ratio_critical"/>
+                    <field name="dias_caja_critical"/>
+                    <field name="altman_z_critical"/>
+                    <field name="notify_managers"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_sentinella_config" model="ir.actions.act_window">
+            <field name="name">Configuración Sentinella</field>
+            <field name="res_model">sentinella.config</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

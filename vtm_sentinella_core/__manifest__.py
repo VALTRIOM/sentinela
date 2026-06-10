@@ -1,0 +1,32 @@
+{
+    "name": "Sentinella",
+    "summary": "Plataforma de Inteligencia Empresarial — Alerta Temprana Financiera",
+    "version": "16.0.1.0.0",
+    "category": "Accounting/Accounting",
+    "author": "VALTRIOM DEVELOPMENTS",
+    "website": "https://www.valtriom.com",
+    "license": "AGPL-3",
+    "depends": ["base", "account", "account_accountant", "stock", "mail", "web", "report_xlsx"],
+    "application": True,
+    "installable": True,
+    "data": [
+        "security/groups.xml",
+        "security/ir.model.access.csv",
+        "data/sentinel_defaults.xml",
+        "data/cron.xml",
+        "views/sentinella_config.xml",
+        "views/sentinella_snapshot.xml",
+        "views/sentinella_alert.xml",
+        "views/sentinella_cost.xml",
+        "views/sentinella_recommendation.xml",
+        "views/sentinella_dashboard.xml",
+        "views/menus.xml",
+    ],
+    "assets": {
+        "web.assets_backend": [
+            "vtm_sentinella_core/static/src/js/sentinella_dashboard.js",
+            "vtm_sentinella_core/static/src/scss/sentinella_dashboard.scss",
+            "vtm_sentinella_core/static/src/xml/sentinella_dashboard.xml",
+        ],
+    },
+}
